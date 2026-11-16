@@ -30,13 +30,28 @@ export default function Checkout() {
     );
   }
 
-  const onSubmit = async (e: FormEvent) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
     event('checkout_started', { method: 'card', items: count });
+
+    const formData = new FormData(e.currentTarget);
+    const cardNumber = String(formData.get('cardNumber') ?? '');
+    const expiry = String(formData.get('expiry') ?? '');
+    const cvc = String(formData.get('cvc') ?? '');
+
     try {
-      const result = await processPayment({ email, total, items: count });
+      const result = await processPayment({
+        email,
+        total,
+        items: count,
+        card: {
+          number: cardNumber,
+          expiry,
+          cvc,
+        },
+      });
       event('checkout_completed', { method: 'card', items: count, value: total });
       clear();
       navigate('/confirmation', {
