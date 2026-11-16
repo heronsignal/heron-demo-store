@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-import DemoControls from './components/DemoControls';
 import Storefront from './pages/Storefront';
 import Checkout from './pages/Checkout';
 import Confirmation from './pages/Confirmation';
@@ -20,7 +19,6 @@ export default function App() {
           <span className="muted">Demo storefront for HeronSignal</span>
         </div>
       </footer>
-      <DemoControls />
     </>
   );
 }

@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Fjord Supply Co. — a demo storefront for exercising HeronSignal monitoring (frontend errors, session replay, anomaly detection) with a deliberately breakable checkout.",
+  "description": "Fjord Supply Co., a small storefront monitored with HeronSignal.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

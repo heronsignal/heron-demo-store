@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../store/cart';
 import { formatUsd } from '../data/products';
-import { processPayment, CardDeclinedError, getFailureMode } from '../lib/payment';
+import { processPayment, CardDeclinedError } from '../lib/payment';
 import { event, log } from '../lib/heronsignal';
 
 const SHIPPING = 6;
@@ -52,16 +52,14 @@ export default function Checkout() {
         });
         setError(err.message);
       } else {
-        // Unexpected failure. Show a broken-checkout state to the customer AND
-        // surface the real error out-of-band so window.onerror / HeronSignal
-        // captures the stack. This is the moment the demo is about.
+        // Unexpected failure: tell the customer, and rethrow outside React so
+        // the global error handler records the stack.
         event('checkout_payment_failed', {
           method: 'card',
           reason: 'unexpected_error',
         });
         log('error', 'Checkout payment failed', {
           reason: 'unexpected_error',
-          failure_mode: getFailureMode(),
           items: count,
         });
         setError('Something went wrong processing your payment. Please try again.');
@@ -70,8 +68,6 @@ export default function Checkout() {
         });
       }
     } finally {
-      // Note: in "infinite spinner" mode processPayment never resolves, so this
-      // never runs and the button spins forever, by design.
       setLoading(false);
     }
   };
@@ -129,6 +125,7 @@ export default function Checkout() {
               <label>
                 Card number
                 <input
+                  name="cardNumber"
                   inputMode="numeric"
                   required
                   placeholder="4242 4242 4242 4242"
@@ -138,11 +135,11 @@ export default function Checkout() {
               <div className="field-row">
                 <label>
                   Expiry
-                  <input required placeholder="MM / YY" defaultValue="04 / 27" />
+                  <input name="expiry" required placeholder="MM / YY" defaultValue="04 / 27" />
                 </label>
                 <label>
                   CVC
-                  <input required placeholder="123" defaultValue="123" />
+                  <input name="cvc" required placeholder="123" defaultValue="123" />
                 </label>
               </div>
             </div>
